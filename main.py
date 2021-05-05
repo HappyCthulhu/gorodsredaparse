@@ -30,9 +30,7 @@ def get_data(number):
     response = requests.request("GET", url, headers=headers, data=payload)
     label_data = json.loads(response.text)
     logger.debug(f'Название объекта: {label_data["data"]["name"]}')
-    # list.append(response.text)
     return label_data
-    # print(response.text)
 
 
 def unpack_data_from_yaml_file(fp):
