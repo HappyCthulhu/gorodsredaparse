@@ -1,4 +1,3 @@
-#!/bin/env python3.9
 import json
 
 from argparse import ArgumentParser
@@ -23,22 +22,20 @@ def parse_features(data: dict):
         "geometry": {
             "type": "Point",
             "coordinates": [
-                data.get("map_json").get("features")[0].get("geometry").get("coordinates")[1],
-                data.get("map_json").get("features")[0].get("geometry").get("coordinates")[0]
+                float(data.get("map_json").get("features")[0].get("geometry").get("coordinates")[1]),
+                float(data.get("map_json").get("features")[0].get("geometry").get("coordinates")[0])
             ]
         }
     }
 
 
-def evaluate_field(json_data_list: list) -> list:
+def evaluate_field(json_data_list: list) -> dict:
     features = []
-    counter = 0
     for dict_chunk in json_data_list:
         data: dict = dict_chunk.get("data")
-        if data:
-            if "map_json" in data and data.get("map_json") is not None:
-                if len(data.get("map_json").get("features")) > 0:
-                    features.append(parse_features(data))
+        if data and "map_json" in data and data.get("map_json") and data.get("map_json").get("features"):
+            features.append(parse_features(data))
+
     return {
         "type": "FeatureCollection",
         "features": features
