@@ -1,4 +1,5 @@
 import json
+import os
 import shutil
 import sys
 
@@ -7,7 +8,6 @@ import yaml
 from loguru import logger
 
 from logging_dir.logging import set_logger, my_exception_hook
-
 
 
 def get_data(number):
@@ -35,17 +35,11 @@ def get_data(number):
     # print(response.text)
 
 
-set_logger()
-sys.excepthook = my_exception_hook
-PATH_TO_YAML_FILE = 'result.yml'
-PATH_TO_JSON_FILE = 'result.json'
-PATH_TO_JSON_BACKUP_FILE = 'result_backup.json'
-
 def unpack_data_from_yaml_file(fp):
     with open(fp, 'r') as file:
         file_info = yaml.load(file, Loader=yaml.FullLoader)
         return file_info
-GIT
+
 
 def unpack_data_from_json_file(fp):
     with open(fp, 'r', encoding='utf-8') as file:
@@ -56,37 +50,37 @@ def unpack_data_from_json_file(fp):
 def dump_in_json_file(data, fp):
     with open(fp, 'w', encoding='utf8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+        
+def check_json_file_exist(fp):
+    if not os.path.isfile(fp):
+        with open(fp, 'w', encoding='utf-8') as file:
+            empty_list = []
+            json.dump(empty_list, file) 
 
-end_number = 9000
 
+set_logger()
+sys.excepthook = my_exception_hook
+PATH_TO_YAML_FILE = 'result.yml'
+PATH_TO_JSON_FILE = 'result.json'
+PATH_TO_JSON_BACKUP_FILE = 'result_backup.json'
+END_COUNT = 9000
+
+check_json_file_exist(PATH_TO_JSON_FILE)
 file_data = unpack_data_from_json_file(PATH_TO_JSON_FILE)
 list = file_data
+START_COUNT = 0
 
 if list:
     list_of_id = []
-    # TODO: придумать, что сделать, если файл пустой
     for i in file_data:
         count = i['data'].get('id')
         if count:
             list_of_id.append(count)
-    # if not list:
-    #     list = []
-    # TODO: сделать функцию, которая берет последний элемент списка
-    start_number = int(list_of_id[-1]) + 1
-else:
-    start_number = 0
-logger.info(f'Начинаем с номера: {start_number}')
+    START_COUNT = int(list_of_id[-1]) + 1
 
-for i in range(start_number, end_number):
-    # # TODO: приделать or "Not Found"
-    # # TODO: возможно лучше просто последний id забрать из файла
-    # print(list_of_id)
-    # if i < list_of_id[-1]:
-    #     continue
-    # if i in list_of_id:
-    #     logger.critical('Эта запись уже была собрана')
-    #     continue
-        # file_data.append(marker_data)
+logger.info(f'Начинаем с номера: {START_COUNT}')
+
+for i in range(START_COUNT, END_COUNT):
     logger.info(f'Номер записи: {i}')
     marker_data = get_data(i)
     list.append(marker_data)
@@ -94,6 +88,5 @@ for i in range(start_number, end_number):
     if i % 100 == 0:
         shutil.copy(PATH_TO_JSON_FILE, PATH_TO_JSON_BACKUP_FILE)
         logger.info(f'Сделал бэкап: {PATH_TO_JSON_BACKUP_FILE}')
-    # file_info = yaml.dump(file, Loader=yaml.FullLoader)
 
 logger.debug('success, bitch')
