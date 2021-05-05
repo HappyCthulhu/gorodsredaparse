@@ -45,10 +45,10 @@ def unpack_data_from_yaml_file(fp):
     with open(fp, 'r') as file:
         file_info = yaml.load(file, Loader=yaml.FullLoader)
         return file_info
-
+GIT
 
 def unpack_data_from_json_file(fp):
-    with open(fp, 'r') as file:
+    with open(fp, 'r', encoding='utf-8') as file:
         file_info = json.load(file)
         return file_info
 
