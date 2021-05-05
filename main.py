@@ -4,7 +4,6 @@ import shutil
 import sys
 
 import requests
-import yaml
 from loguru import logger
 
 from logging_dir.logging import set_logger, my_exception_hook
@@ -33,12 +32,6 @@ def get_data(number):
     return label_data
 
 
-def unpack_data_from_yaml_file(fp):
-    with open(fp, 'r') as file:
-        file_info = yaml.load(file, Loader=yaml.FullLoader)
-        return file_info
-
-
 def unpack_data_from_json_file(fp):
     with open(fp, 'r', encoding='utf-8') as file:
         file_info = json.load(file)
@@ -48,12 +41,13 @@ def unpack_data_from_json_file(fp):
 def dump_in_json_file(data, fp):
     with open(fp, 'w', encoding='utf8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
-        
+
+
 def check_json_file_exist(fp):
     if not os.path.isfile(fp):
         with open(fp, 'w', encoding='utf-8') as file:
             empty_list = []
-            json.dump(empty_list, file) 
+            json.dump(empty_list, file)
 
 
 set_logger()
