@@ -18,6 +18,9 @@ def parse_features(data: dict):
             "region_name": data.get("region").get("name"),
             "vote_counter": data.get("count_votes"),
             "address": data.get("address"),
+            "status": data.get("status").get("name"),
+            "images": data.get("images").get("items"),
+            "city": data.get("municipality").get("name") if data.get("municipality") else "Не указан"
         },
         "geometry": {
             "type": "Point",
@@ -59,5 +62,5 @@ if __name__ == '__main__':
     json_data_list = get_json_data(in_file)
     geo_data_dict = evaluate_field(json_data_list)
 
-    with open(f"{out_file}.json", "w") as file:
+    with open(out_file, "w") as file:
         json.dump(geo_data_dict, file, ensure_ascii=False, indent=4, separators=(',', ': '))
